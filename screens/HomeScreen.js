@@ -7,26 +7,41 @@ import { useNavigation } from '@react-navigation/native'
 import * as Location from 'expo-location'
 import { LinearGradient } from 'expo-linear-gradient'
 
+// Breedte van het scherm ophalen voor eventueel responsive design
 const { width } = Dimensions.get('window')
 
 export default function HomeScreen({ navigation: propNavigation }) {
+    // Ophalen van dark/light mode uit ThemeContext
     const { darkMode } = useContext(ThemeContext)
+
+    // Ophalen van vertaalde teksten uit LanguageContext
     const { texts } = useContext(LanguageContext)
+
+    // Navigatie object (van React Navigation)
     const navigation = useNavigation() || propNavigation
+
+    // Alle pizzeria's uit de JSON
     const [pizzerias, setPizzerias] = useState([])
+
+    // Alleen de pizzeria's die dichtbij de gebruiker zijn
     const [nearbyPizzerias, setNearbyPizzerias] = useState([])
+
+    // Huidige locatie van de gebruiker
     const [userLocation, setUserLocation] = useState(null)
 
+    // Wordt uitgevoerd wanneer het scherm laadt
     useEffect(() => {
         getUserLocation()
     }, [])
 
+    // Wanneer userLocation beschikbaar is, haal de pizzeria's op
     useEffect(() => {
         if (userLocation) {
             fetchPizzerias()
         }
     }, [userLocation])
 
+    // Vraag permissie en haal de locatie van de gebruiker op
     const getUserLocation = async () => {
         try {
             const { status } = await Location.requestForegroundPermissionsAsync()
@@ -39,6 +54,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                     longitude: location.coords.longitude,
                 })
             } else {
+                // Geen toestemming → gebruik Nederland als standaardlocatie
                 setUserLocation({
                     latitude: 52.1326,
                     longitude: 5.2913,
@@ -46,6 +62,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
             }
         } catch (err) {
             console.error("Error getting location:", err)
+            // Fallback naar Nederland bij een error
             setUserLocation({
                 latitude: 52.1326,
                 longitude: 5.2913,
@@ -53,8 +70,9 @@ export default function HomeScreen({ navigation: propNavigation }) {
         }
     }
 
+    // Bereken afstand in km tussen twee punten (Haversine formule)
     const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        const R = 6371
+        const R = 6371 // Straal van de aarde in km
         const dLat = deg2rad(lat2 - lat1)
         const dLon = deg2rad(lon2 - lon1)
         const a =
@@ -66,10 +84,12 @@ export default function HomeScreen({ navigation: propNavigation }) {
         return distance
     }
 
+    // Graden omrekenen naar radialen
     const deg2rad = (deg) => {
         return deg * (Math.PI/180)
     }
 
+    // Haal JSON op van github met alle pizzeria's
     const fetchPizzerias = async () => {
         try {
             const response = await fetch('https://zoruasy.github.io/pizzaria-hotspots/pizzarias.json');
@@ -77,6 +97,8 @@ export default function HomeScreen({ navigation: propNavigation }) {
                 throw new Error('Network response was not ok')
             }
             const data = await response.json()
+
+            // Voeg afstand en andere extra data toe aan elke pizzeria
             const pizzeriasWithDistance = data.hotspots.map(pizzeria => {
                 const distance = calculateDistance(
                     userLocation.latitude,
@@ -93,6 +115,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                 }
             })
 
+            // Sorteer op afstand en pak de 3 dichtstbijzijnde
             const closest = pizzeriasWithDistance
                 .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance))
                 .slice(0, 3)
@@ -104,14 +127,20 @@ export default function HomeScreen({ navigation: propNavigation }) {
         }
     }
 
+    // Navigatie naar kaartscherm
     const goToMap = () => navigation.navigate('Map')
+
+    // Navigatie naar lijstscherm
     const goToList = () => navigation.navigate('List')
+
+    // Navigatie naar kaartscherm met geselecteerde pizzeria
     const goToPizzeriaOnMap = (pizzeria) => {
         navigation.navigate('Map', {
             selectedHall: pizzeria
         })
     }
 
+    // Elke keer dat je terugkeert naar dit scherm, opnieuw laden
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             if (userLocation) {
@@ -128,26 +157,65 @@ export default function HomeScreen({ navigation: propNavigation }) {
                 contentContainerStyle={styles.scrollContent}
                 bounces={true}
             >
-                {/* Hero Header */}
+                {/* Hero header bovenaan */}
                 <View style={[styles.heroContainer, darkMode ? styles.darkHeroContainer : null]}>
                     <View style={styles.heroContent}>
-                        <View style={styles.pizzaIconContainer}>
-                            <Ionicons
-                                name="pizza"
-                                size={32}
-                                color={darkMode ? "#FF6B6B" : "#EF4444"}
-                            />
+                        {/* Titel + iconen */}
+                        <View style={styles.titleSection}>
+                            <View style={styles.titleRow}>
+                                <View style={styles.pizzaIconContainer}>
+                                    <Ionicons
+                                        name="pizza"
+                                        size={28}
+                                        color={darkMode ? "#FF6B6B" : "#EF4444"}
+                                    />
+                                </View>
+                                <View style={styles.titleTextContainer}>
+                                    <Text style={[styles.titleMain, darkMode ? styles.darkText : null]}>
+                                        Pizzeria
+                                    </Text>
+                                    <Text style={[styles.titleAccent, darkMode ? styles.darkAccentText : null]}>
+                                        Hotspots
+                                    </Text>
+                                </View>
+                                <View style={styles.decorativeElements}>
+                                    {/* Decoratieve bolletjes */}
+                                    <View style={[styles.dot, { backgroundColor: darkMode ? '#FF6B6B' : '#EF4444' }]} />
+                                    <View style={[styles.dot, { backgroundColor: darkMode ? '#34D399' : '#10B981' }]} />
+                                    <View style={[styles.dot, { backgroundColor: darkMode ? '#F59E0B' : '#D97706' }]} />
+                                </View>
+                            </View>
                         </View>
-                        <Text style={[styles.title, darkMode ? styles.darkText : null]}>
-                            Pizzeria Hotspots
-                        </Text>
+
+                        {/* Ondertitel */}
                         <Text style={[styles.subtitle, darkMode ? styles.darkSubText : null]}>
-                            Ontdek de beste pizza's in Rotterdam! 🍕
+                            Ontdek de beste pizza's in Nederland!
                         </Text>
+
+                        {/* Stats */}
+                        <View style={styles.statsRow}>
+                            <View style={styles.statItem}>
+                                <Text style={[styles.statNumber, darkMode ? styles.darkAccentText : null]}>
+                                    {pizzerias.length}+
+                                </Text>
+                                <Text style={[styles.statLabel, darkMode ? styles.darkSubText : null]}>
+                                    Pizzeria's
+                                </Text>
+                            </View>
+                            <View style={styles.statDivider} />
+                            <View style={styles.statItem}>
+                                <Text style={[styles.statNumber, darkMode ? styles.darkAccentText : null]}>
+                                    4.5★
+                                </Text>
+                                <Text style={[styles.statLabel, darkMode ? styles.darkSubText : null]}>
+                                    Gemiddeld
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
 
-                {/* Quick Action Buttons */}
+                {/* Snelknoppen */}
                 <View style={styles.actionContainer}>
                     <TouchableOpacity
                         style={[styles.actionButton, darkMode ? styles.darkActionButton : null]}
@@ -176,7 +244,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                     >
                         <View style={[styles.actionIconContainer, darkMode ? styles.darkActionIconContainer : null]}>
                             <Ionicons
-                                name="list"
+                                name="pizza"
                                 size={24}
                                 color={darkMode ? "#34D399" : "#10B981"}
                             />
@@ -190,7 +258,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                     </TouchableOpacity>
                 </View>
 
-                {/* Nearby Pizzerias */}
+                {/* Overzicht van pizzeria's dichtbij */}
                 <View style={styles.sectionContainer}>
                     <View style={styles.sectionHeader}>
                         <View style={styles.sectionTitleContainer}>
@@ -215,6 +283,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                         </TouchableOpacity>
                     </View>
 
+                    {/* Geen resultaten */}
                     {nearbyPizzerias.length === 0 ? (
                         <View style={[styles.emptyState, darkMode ? styles.darkEmptyState : null]}>
                             <Ionicons
@@ -250,7 +319,6 @@ export default function HomeScreen({ navigation: propNavigation }) {
                                             </Text>
                                         </View>
                                     </View>
-
                                     <View style={styles.cardRight}>
                                         <View style={[styles.ratingBadge, darkMode ? styles.darkRatingBadge : null]}>
                                             <Ionicons
@@ -274,7 +342,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                     )}
                 </View>
 
-                {/* Today's Tip */}
+                {/* Tip van de dag */}
                 <View style={[styles.tipContainer, darkMode ? styles.darkTipContainer : null]}>
                     <View style={styles.tipHeader}>
                         <View style={[styles.tipIconContainer, darkMode ? styles.darkTipIconContainer : null]}>
@@ -286,7 +354,7 @@ export default function HomeScreen({ navigation: propNavigation }) {
                         </View>
                         <View style={styles.tipHeaderText}>
                             <Text style={[styles.tipTitle, darkMode ? styles.darkText : null]}>
-                                Pizza Tip van de Dag
+                                Tip van de dag
                             </Text>
                             <Text style={[styles.tipSubtitle, darkMode ? styles.darkSubText : null]}>
                                 Van onze chef-koks
@@ -294,294 +362,13 @@ export default function HomeScreen({ navigation: propNavigation }) {
                         </View>
                     </View>
                     <Text style={[styles.tipText, darkMode ? styles.darkSubText : null]}>
-                        Probeer eens een pizza met buffelmozzarella en verse basilicum voor de ultieme Italiaanse ervaring! 🇮🇹
+                        Probeer eens een pizza met buffelmozzarella en verse basilicum voor de echte italiaanse smaak ;)
                     </Text>
                 </View>
 
-                {/* Bottom Spacing */}
+                {/* Onderkant witruimte */}
                 <View style={styles.bottomSpacing} />
             </ScrollView>
         </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F8FAFC',
-    },
-    darkContainer: {
-        backgroundColor: '#0F172A',
-    },
-    scrollContent: {
-        paddingHorizontal: 20,
-    },
-
-    // Hero Section
-    heroContainer: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 20,
-        marginTop: 20,
-        marginBottom: 24,
-        padding: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    darkHeroContainer: {
-        backgroundColor: '#1E293B',
-    },
-    heroContent: {
-        alignItems: 'center',
-    },
-    pizzaIconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: '#FEF2F2',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 16,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: '800',
-        color: '#1F2937',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    darkText: {
-        color: '#F1F5F9',
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#6B7280',
-        textAlign: 'center',
-        lineHeight: 24,
-    },
-    darkSubText: {
-        color: '#94A3B8',
-    },
-
-    // Action Buttons
-    actionContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 32,
-        gap: 12,
-    },
-    actionButton: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 16,
-        padding: 20,
-        alignItems: 'center',
-        flex: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    darkActionButton: {
-        backgroundColor: '#1E293B',
-    },
-    actionIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#EFF6FF',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 12,
-    },
-    darkActionIconContainer: {
-        backgroundColor: '#1E3A8A',
-    },
-    actionText: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#1F2937',
-        marginBottom: 4,
-        textAlign: 'center',
-    },
-    actionSubtext: {
-        fontSize: 12,
-        color: '#6B7280',
-        textAlign: 'center',
-    },
-
-    // Section Headers
-    sectionContainer: {
-        marginBottom: 32,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    sectionTitleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#1F2937',
-    },
-    seeAllButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    seeAll: {
-        color: '#3B82F6',
-        fontWeight: '600',
-        fontSize: 14,
-    },
-    darkSeeAll: {
-        color: '#60A5FA',
-    },
-
-    // Pizzeria Cards
-    pizzeriaCard: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    darkPizzeriaCard: {
-        backgroundColor: '#1E293B',
-    },
-    cardContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    pizzeriaInfo: {
-        flex: 1,
-    },
-    pizzeriaName: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#1F2937',
-        marginBottom: 6,
-    },
-    locationRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    locationText: {
-        fontSize: 14,
-        color: '#6B7280',
-    },
-    cardRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    ratingBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#FFFBEB',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 12,
-        gap: 4,
-    },
-    darkRatingBadge: {
-        backgroundColor: '#451A03',
-    },
-    rating: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#92400E',
-    },
-    darkRatingText: {
-        color: '#FCD34D',
-    },
-
-    // Empty State
-    emptyState: {
-        alignItems: 'center',
-        padding: 40,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    darkEmptyState: {
-        backgroundColor: '#1E293B',
-    },
-    noHallsText: {
-        fontSize: 16,
-        color: '#6B7280',
-        textAlign: 'center',
-        marginTop: 12,
-        fontWeight: '500',
-    },
-
-    // Tip Container
-    tipContainer: {
-        backgroundColor: '#FFFBEB',
-        borderRadius: 16,
-        padding: 20,
-        borderWidth: 1,
-        borderColor: '#FED7AA',
-    },
-    darkTipContainer: {
-        backgroundColor: '#451A03',
-        borderColor: '#92400E',
-    },
-    tipHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 12,
-        gap: 12,
-    },
-    tipIconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#FEF3C7',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    darkTipIconContainer: {
-        backgroundColor: '#92400E',
-    },
-    tipHeaderText: {
-        flex: 1,
-    },
-    tipTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#1F2937',
-        marginBottom: 2,
-    },
-    tipSubtitle: {
-        fontSize: 12,
-        color: '#6B7280',
-    },
-    tipText: {
-        fontSize: 14,
-        color: '#4B5563',
-        lineHeight: 20,
-    },
-
-    bottomSpacing: {
-        height: 20,
-    },
-});

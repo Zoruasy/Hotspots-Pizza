@@ -6,13 +6,20 @@ import { LanguageContext } from '../components/LanguageContext';
 import { languageOptions } from '../translations/Languages';
 
 export default function SettingsScreen() {
+    // Haal dark mode state & toggle functie uit Themecontext
     const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+
+    // Haal huidige taal en vertalingen op uit Languagecontext
     const { texts, currentLanguage, changeLanguage } = useContext(LanguageContext);
+
+    // State om dropdown met talen te tonen/verbergen
     const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+
 
     const toggleLanguageSelector = () => {
         setShowLanguageSelector(!showLanguageSelector);
     };
+
 
     const selectLanguage = (languageCode) => {
         changeLanguage(languageCode);
@@ -21,6 +28,7 @@ export default function SettingsScreen() {
 
     return (
         <ScrollView style={[styles.container, darkMode ? styles.darkContainer : null]}>
+            {/* Titel van de pagina */}
             <Text style={[styles.heading, darkMode ? styles.darkText : null]}>
                 {texts.settings}
             </Text>
@@ -46,7 +54,7 @@ export default function SettingsScreen() {
                 />
             </View>
 
-            {/* Language Setting */}
+            {/* Taalkeuze Setting */}
             <TouchableOpacity
                 style={[styles.settingItem, darkMode ? styles.darkSettingItem : null]}
                 onPress={toggleLanguageSelector}
@@ -63,11 +71,12 @@ export default function SettingsScreen() {
                     </Text>
                 </View>
                 <Text style={[styles.currentValueText, darkMode ? styles.darkText : null]}>
+                    {/* Toon de naam van de huidige taal */}
                     {languageOptions.find(lang => lang.code === currentLanguage)?.label}
                 </Text>
             </TouchableOpacity>
 
-            {/* Language Selector Dropdown */}
+            {/* Dropdown met talen */}
             {showLanguageSelector && (
                 <View style={[styles.languageSelector, darkMode ? styles.darkLanguageSelector : null]}>
                     {languageOptions.map((option) => (
@@ -93,6 +102,7 @@ export default function SettingsScreen() {
                 </View>
             )}
 
+            {/* Opmerking onderaan */}
             <Text style={[styles.note, darkMode ? styles.darkNote : null]}>
                 {texts.preferenceSaved}
             </Text>

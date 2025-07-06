@@ -1,17 +1,21 @@
 // ThemeContext.js
+
 import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+//  Hiermee kan elke component in de app
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+    // Hier slaan we op of dark mode aan staat (true) of uit (false)
     const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
-        // Load the saved theme preference when app starts
+        // Laad dark mode-voorkeur zodra app start
         loadThemePreference();
     }, []);
 
+    // darmode uit async halen
     const loadThemePreference = async () => {
         try {
             const jsonValue = await AsyncStorage.getItem('darkmode-preference');
@@ -24,6 +28,7 @@ export const ThemeProvider = ({ children }) => {
         }
     };
 
+   // zet darkmode aan of uit
     const toggleDarkMode = async () => {
         try {
             const newDarkMode = !darkMode;
@@ -35,6 +40,8 @@ export const ThemeProvider = ({ children }) => {
         }
     };
 
+    // - darkMode: true of false
+    // - toggleDarkMode: functie om dark mode aan/uit te zetten
     return (
         <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
             {children}

@@ -5,11 +5,14 @@ import { translations } from '../translations/Languages';
 export const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
+    // Hier onthouden we welke taal op dit moment actief is
     const [currentLanguage, setCurrentLanguage] = useState('en');
+
+    // Hier staan de teksten (vertalingen) van de gekozen taal
     const [texts, setTexts] = useState(translations.en);
 
     useEffect(() => {
-        // Load saved language preference
+        // Bij opstarten: laad eventueel eerder opgeslagen taalvoorkeur
         const loadLanguagePreference = async () => {
             try {
                 const savedLanguage = await AsyncStorage.getItem('app-language');
@@ -27,17 +30,17 @@ export const LanguageProvider = ({ children }) => {
 
     const changeLanguage = async (languageCode) => {
         try {
-            // Validate language code
+            // Check of deze taal wel bestaat in onze vertalingen
             if (!translations[languageCode]) {
                 console.error('Invalid language code:', languageCode);
                 return;
             }
 
-            // Update state
+            // Pas de taal in de state aan
             setCurrentLanguage(languageCode);
             setTexts(translations[languageCode]);
 
-            // Save preference
+            // Sla de keuze op zodat die behouden blijft na afsluiten app
             await AsyncStorage.setItem('app-language', languageCode);
         } catch (error) {
             console.error('Failed to save language preference', error);
@@ -45,7 +48,13 @@ export const LanguageProvider = ({ children }) => {
     };
 
     return (
-        <LanguageContext.Provider value={{ texts, currentLanguage, changeLanguage }}>
+        <LanguageContext.Provider
+            value={{
+                texts,             // Alle vertaalde teksten
+                currentLanguage,   // Huidige taalcode ('en', 'nl', etc.)
+                changeLanguage     // Functie om taal te wijzigen
+            }}
+        >
             {children}
         </LanguageContext.Provider>
     );

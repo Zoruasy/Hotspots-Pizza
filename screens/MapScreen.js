@@ -5,22 +5,37 @@ import * as Location from 'expo-location';
 import { ThemeContext } from '../components/ThemeContext';
 
 export default function MapScreen({ route, navigation }) {
+    // State voor pizzeria's
     const [pizzerias, setPizzerias] = useState([]);
+
+    // Eventuele foutmeldingen
     const [error, setError] = useState(null);
+
+    // Locatie van de gebruiker
     const [userLocation, setUserLocation] = useState(null);
+
+    // Toestemming voor locatie
     const [locationPermission, setLocationPermission] = useState(false);
+
+    // Ref naar de MapView, om bijvoorbeeld te kunnen animeren
     const mapRef = useRef(null);
+
+    // Dark mode context ophalen
     const { darkMode } = useContext(ThemeContext);
 
+    // Pizzeria die eventueel vanuit een andere pagina geselecteerd is
     const selectedPizzeria = route.params?.selectedHall;
 
+    // Bij laden van de component → locatie ophalen en pizzeria's ophalen
     useEffect(() => {
         (async () => {
             try {
+                // Vraag toestemming voor locatie
                 const { status } = await Location.requestForegroundPermissionsAsync();
                 setLocationPermission(status === 'granted');
 
                 if (status === 'granted') {
+                    // Haal huidige locatie op
                     const location = await Location.getCurrentPositionAsync({
                         accuracy: Location.Accuracy.Balanced,
                     });
@@ -29,6 +44,7 @@ export default function MapScreen({ route, navigation }) {
                         longitude: location.coords.longitude,
                     });
 
+                    // Als er geen geselecteerde pizzeria is, zoom dan in op de huidige locatie
                     if (!selectedPizzeria && mapRef.current) {
                         mapRef.current.animateToRegion({
                             latitude: location.coords.latitude,
@@ -47,6 +63,7 @@ export default function MapScreen({ route, navigation }) {
         fetchPizzerias();
     }, []);
 
+    // Als er een geselecteerde pizzeria is → zoom daarnaar
     useEffect(() => {
         if (selectedPizzeria && mapRef.current) {
             mapRef.current.animateToRegion({
@@ -58,6 +75,9 @@ export default function MapScreen({ route, navigation }) {
         }
     }, [selectedPizzeria, pizzerias]);
 
+    /**
+     * Haal alle pizzeria's op uit de externe JSON
+     */
     const fetchPizzerias = async () => {
         try {
             const response = await fetch('https://zoruasy.github.io/pizzaria-hotspots/pizzarias.json');
@@ -68,6 +88,7 @@ export default function MapScreen({ route, navigation }) {
 
             const data = await response.json();
 
+            // Voeg extra velden toe (stad en provincie)
             const pizzeriasWithExtras = data.hotspots.map((pizzeria) => ({
                 ...pizzeria,
                 city: 'Rotterdam',
@@ -82,6 +103,7 @@ export default function MapScreen({ route, navigation }) {
         }
     };
 
+    // Bepaal het initiële gebied op de kaart
     const initialRegion = userLocation
         ? {
             latitude: userLocation.latitude,
@@ -90,7 +112,7 @@ export default function MapScreen({ route, navigation }) {
             longitudeDelta: 0.05,
         }
         : {
-            latitude: 52.1326,
+            latitude: 52.1326,          // Centrum van Nederland
             longitude: 5.2913,
             latitudeDelta: 3.0,
             longitudeDelta: 3.0,
@@ -98,6 +120,7 @@ export default function MapScreen({ route, navigation }) {
 
     return (
         <View style={[styles.container, darkMode ? styles.darkContainer : null]}>
+            {/* Kaart component */}
             <MapView
                 ref={mapRef}
                 style={styles.map}
@@ -107,6 +130,7 @@ export default function MapScreen({ route, navigation }) {
                 showsMyLocationButton={true}
                 userInterfaceStyle={darkMode ? 'dark' : 'light'}
             >
+                {/* Markers tekenen voor elke pizzeria */}
                 {pizzerias.map((pizzeria, index) => (
                     <Marker
                         key={index}
@@ -118,6 +142,7 @@ export default function MapScreen({ route, navigation }) {
                         description={pizzeria.description}
                         pinColor={darkMode ? "#FF5733" : "#FF0000"}
                     >
+                        {/* Info venster als je op de marker tikt */}
                         <Callout>
                             <View style={styles.callout}>
                                 <Text style={styles.calloutTitle}>{pizzeria.name}</Text>
@@ -127,6 +152,8 @@ export default function MapScreen({ route, navigation }) {
                     </Marker>
                 ))}
             </MapView>
+
+            {/* Toon een foutmelding indien aanwezig */}
             {error && (
                 <View style={styles.errorContainer}>
                     <Text style={[styles.errorText, darkMode ? styles.darkText : null]}>

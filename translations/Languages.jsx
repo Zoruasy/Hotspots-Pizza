@@ -1,18 +1,17 @@
-// translations/languages.js
 export const translations = {
     en: {
         // General
-        appName: "Boulder App",
+        appName: "Pizzeria App",
 
         // List Screen
-        boulderHalls: "Boulder Halls",
-        browseLocations: "Browse all available locations",
+        pizzerias: "Pizzerias",
+        browseLocations: "Browse all available pizzerias",
         searchPlaceholder: "Search by name or location...",
         favorites: "Favorites",
-        hallsFound: "hall(s) found",
-        noFavorites: "No favorite boulder halls yet",
-        addToFavorites: "Tap the star icon to add halls to your favorites",
-        noMatchingHalls: "No matching boulder halls",
+        pizzeriasFound: "pizzeria(s) found",
+        noFavorites: "No favorite pizzerias yet",
+        addToFavorites: "Tap the heart icon to add pizzerias to your favorites",
+        noMatchingPizzerias: "No matching pizzerias found",
         adjustSearch: "Try adjusting your search terms",
 
         // Settings Screen
@@ -25,30 +24,30 @@ export const translations = {
         preferenceSaved: "Your preference will be saved for future sessions",
 
         // Home Screen
-        appTitle: "BoulderBuddy",
-        appSubtitle: "Discover your next climbing adventure",
+        appTitle: "PizzaBuddy",
+        appSubtitle: "Discover the best pizza spots around you",
         findOnMap: "Find on Map",
         browseList: "Browse List",
-        nearbyBoulderHalls: "Nearby Boulder Halls",
+        nearbyPizzerias: "Nearby Pizzerias",
         seeAll: "See All",
-        noNearbyHalls: "No nearby halls found",
+        noNearbyPizzerias: "No nearby pizzerias found",
         kmAway: "km away",
-        climbingTip: "Climbing Tip",
-        tipText: "Remember to warm up properly before attempting difficult routes. Start with easier problems and gradually increase difficulty."
+        pizzaTip: "Pizza Tip",
+        tipText: "Try a pizza with buffalo mozzarella and fresh basil for an authentic Italian experience."
     },
     nl: {
         // General
-        appName: "Boulder App",
+        appName: "Pizzeria App",
 
         // List Screen
-        boulderHalls: "Boulder Hallen",
-        browseLocations: "Bekijk alle beschikbare locaties",
+        pizzerias: "Pizzeria's",
+        browseLocations: "Bekijk alle beschikbare pizzeria's",
         searchPlaceholder: "Zoek op naam of locatie...",
         favorites: "Favorieten",
-        hallsFound: "hal(len) gevonden",
-        noFavorites: "Nog geen favoriete boulder hallen",
-        addToFavorites: "Tik op het ster-icoon om hallen toe te voegen aan je favorieten",
-        noMatchingHalls: "Geen overeenkomende boulder hallen",
+        pizzeriasFound: "pizzeria('s) gevonden",
+        noFavorites: "Nog geen favoriete pizzeria's",
+        addToFavorites: "Tik op het hartje om pizzeria's toe te voegen aan je favorieten",
+        noMatchingPizzerias: "Geen overeenkomende pizzeria's",
         adjustSearch: "Probeer je zoekopdracht aan te passen",
 
         // Settings Screen
@@ -61,30 +60,30 @@ export const translations = {
         preferenceSaved: "Je voorkeur wordt opgeslagen voor toekomstige sessies",
 
         // Home Screen
-        appTitle: "BoulderBuddy",
-        appSubtitle: "Ontdek je volgende klimavontuur",
+        appTitle: "PizzaBuddy",
+        appSubtitle: "Ontdek de beste pizza spots bij jou in de buurt",
         findOnMap: "Vind op Kaart",
         browseList: "Bekijk Lijst",
-        nearbyBoulderHalls: "Boulder Hallen in de Buurt",
+        nearbyPizzerias: "Pizzeria's in de Buurt",
         seeAll: "Bekijk Alles",
-        noNearbyHalls: "Geen hallen in de buurt gevonden",
+        noNearbyPizzerias: "Geen pizzeria's in de buurt gevonden",
         kmAway: "km verwijderd",
-        climbingTip: "Klim Tip",
-        tipText: "Vergeet niet goed op te warmen voordat je moeilijke routes probeert. Begin met gemakkelijkere problemen en verhoog geleidelijk de moeilijkheidsgraad."
+        pizzaTip: "Pizza Tip",
+        tipText: "Probeer eens een pizza met buffelmozzarella en verse basilicum voor een authentieke Italiaanse ervaring."
     },
     de: {
         // General
-        appName: "Boulder App",
+        appName: "Pizzeria App",
 
         // List Screen
-        boulderHalls: "Boulder Hallen",
-        browseLocations: "Durchsuchen Sie alle verfügbaren Standorte",
-        searchPlaceholder: "Suche nach Name oder Standort...",
+        pizzerias: "Pizzerien",
+        browseLocations: "Alle verfügbaren Pizzerien durchsuchen",
+        searchPlaceholder: "Suche nach Name oder Ort...",
         favorites: "Favoriten",
-        hallsFound: "Halle(n) gefunden",
-        noFavorites: "Noch keine Lieblings-Boulder-Hallen",
-        addToFavorites: "Tippen Sie auf das Sternsymbol, um Hallen zu Ihren Favoriten hinzuzufügen",
-        noMatchingHalls: "Keine passenden Boulder-Hallen",
+        pizzeriasFound: "Pizzeria(en) gefunden",
+        noFavorites: "Noch keine Lieblingspizzerien",
+        addToFavorites: "Tippen Sie auf das Herzsymbol, um Pizzerien zu Ihren Favoriten hinzuzufügen",
+        noMatchingPizzerias: "Keine passenden Pizzerien gefunden",
         adjustSearch: "Versuchen Sie, Ihre Suchbegriffe anzupassen",
 
         // Settings Screen
@@ -97,16 +96,16 @@ export const translations = {
         preferenceSaved: "Ihre Einstellung wird für zukünftige Sitzungen gespeichert",
 
         // Home Screen
-        appTitle: "BoulderBuddy",
-        appSubtitle: "Entdecke dein nächstes Kletterabenteuer",
+        appTitle: "PizzaBuddy",
+        appSubtitle: "Entdecke die besten Pizza-Spots in deiner Nähe",
         findOnMap: "Auf Karte finden",
         browseList: "Liste durchsuchen",
-        nearbyBoulderHalls: "Boulder Hallen in der Nähe",
+        nearbyPizzerias: "Pizzerien in der Nähe",
         seeAll: "Alle anzeigen",
-        noNearbyHalls: "Keine Hallen in der Nähe gefunden",
+        noNearbyPizzerias: "Keine Pizzerien in der Nähe gefunden",
         kmAway: "km entfernt",
-        climbingTip: "Klettertipp",
-        tipText: "Denken Sie daran, sich vor schwierigen Routen richtig aufzuwärmen. Beginnen Sie mit leichteren Problemen und steigern Sie allmählich den Schwierigkeitsgrad."
+        pizzaTip: "Pizza Tipp",
+        tipText: "Probieren Sie eine Pizza mit Büffelmozzarella und frischem Basilikum für ein authentisches italienisches Erlebnis."
     }
 };
 
