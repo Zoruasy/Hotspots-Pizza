@@ -8,16 +8,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavBar from "../components/NavBar";
 
 export default function LocationsListScreen() {
-    // Haal de lijst met bibliotheken
     const {libraries} = useContext(LibrariesContext);
-
-    // React n hook om te navigeren
     const navigation = useNavigation();
-
-    // Favoriete bibliotheek-ID's
     const [favorites, setFavorites] = useState([]);
 
-    // Bij laden van het scherm: haal opgeslagen favorieten op uit Asyncstorage
     useEffect(() => {
         const loadFavorites = async () => {
             try {
@@ -32,26 +26,21 @@ export default function LocationsListScreen() {
         loadFavorites();
     }, []);
 
-
     const toggleFavorite = async (id) => {
         let updatedFavorites = [];
 
         if (favorites.includes(id)) {
-            // Als bibliotheek al favoriet is: verwijder uit favorieten
             updatedFavorites = favorites.filter((favId) => favId !== id);
         } else {
-            // Anders: voeg toe aan favorieten
             updatedFavorites = [...favorites, id];
         }
 
         setFavorites(updatedFavorites);
-        // Bewaar de nieuwe lijst in Asyncstorage
         await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
     };
 
     return (
         <SafeAreaView style={{flex: 1}}>
-            {/* Header met terugknop */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Icon name="arrow-left" size={24} color="#333"/>
@@ -59,10 +48,8 @@ export default function LocationsListScreen() {
                 </TouchableOpacity>
             </View>
 
-            {/* ScrollView met alle bibliotheken */}
             <ScrollView contentContainerStyle={styles.container}>
                 {libraries.map((item) => {
-                    // Controleer of bibliotheek favoriet is
                     const isFavorite = favorites.includes(item.id);
 
                     return (
@@ -76,7 +63,6 @@ export default function LocationsListScreen() {
                                     <Text style={styles.name}>{item.name}</Text>
                                     <Text style={styles.address}>{item.address}</Text>
                                 </View>
-                                {/* Harticoon om favoriet aan/uit te zetten */}
                                 <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
                                     <Icon
                                         name="heart"
@@ -89,11 +75,10 @@ export default function LocationsListScreen() {
                     );
                 })}
             </ScrollView>
-
-            {/* Navigatiebalk onderaan */}
             <NavBar/>
         </SafeAreaView>
     );
+
 }
 
 const styles = StyleSheet.create({
@@ -118,7 +103,7 @@ const styles = StyleSheet.create({
         padding: 16,
         paddingBottom: 40,
         marginBottom: 40,
-        backgroundColor: '#70665a',
+        backgroundColor: '#70665a'
     },
     itemContainer: {
         backgroundColor: '#fff',

@@ -1,3 +1,5 @@
+// translations/languages.js
+
 export const translations = {
     en: {
         // General
